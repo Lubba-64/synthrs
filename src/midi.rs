@@ -1,18 +1,20 @@
 //! MIDI parsing routines
 
+use byteorder::{BigEndian, ReadBytesExt};
+#[cfg(feature = "ser")]
+use serde::{Deserialize, Serialize};
 use std::cmp::max;
 use std::fs::File;
 use std::io::{BufReader, Error, ErrorKind, Read, Result, Seek, SeekFrom};
 use std::path::Path;
 use std::vec;
 
-use byteorder::{BigEndian, ReadBytesExt};
-
 // http://www.midi.org/techspecs/midimessages.php
 // http://www.ccarh.org/courses/253/handout/smf/
 // http://www.ccarh.org/courses/253-2008/files/midifiles-20080227-2up.pdf
 // http://dogsbodynet.com/fileformats/midi.html#RUNSTATUS
 
+#[cfg_attr(feature = "ser", derive(Serialize, Deserialize))]
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub enum EventType {
     NoteOff,
@@ -42,6 +44,7 @@ impl EventType {
     }
 }
 
+#[cfg_attr(feature = "ser", derive(Serialize, Deserialize))]
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub enum SystemEventType {
     SystemExclusive,
@@ -79,6 +82,7 @@ impl SystemEventType {
     }
 }
 
+#[cfg_attr(feature = "ser", derive(Serialize, Deserialize))]
 #[derive(PartialEq, Clone, Copy, Debug)]
 pub enum MetaEventType {
     SequenceNumber,
@@ -119,6 +123,7 @@ impl MetaEventType {
     }
 }
 
+#[cfg_attr(feature = "ser", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug)]
 pub struct MidiSong {
     pub max_time: usize,
@@ -128,6 +133,7 @@ pub struct MidiSong {
     pub bpm: f64,
 }
 
+#[cfg_attr(feature = "ser", derive(Serialize, Deserialize))]
 #[derive(Clone, Debug)]
 pub struct MidiTrack {
     pub events: Vec<MidiEvent>,
@@ -144,6 +150,7 @@ impl MidiTrack {
     }
 }
 
+#[cfg_attr(feature = "ser", derive(Serialize, Deserialize))]
 #[derive(Clone, Copy, Debug)]
 pub struct MidiEvent {
     pub event_type: EventType,
